@@ -1,0 +1,69 @@
+# .github/workflows/security-scan.yml
+name: 🔒 Security Scan
+
+on:
+  schedule:
+    # Run every Tuesday at 3 AM UTC
+    - cron: '0 3 * * 2'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.gradle'
+      - '**/*.gradle.kts'
+      - 'gradle/wrapper/gradle-wrapper.properties'
+
+jobs:
+  security-scan:
+    name: 🛡️ Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: 🔍 Run OWASP Dependency Check
+        run: ./gradlew dependencyCheckAnalyze
+
+      - name: 📊 Upload dependency check results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: build/reports/dependency-check-report.html
+
+      - name: 🚨 Create issue for vulnerabilities
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "🚨 Security Vulnerabilities Detected";
+            const body = `
+            Security vulnerabilities have been detected in our dependencies.
+            
+            Please review the dependency check report and update vulnerable dependencies.
+            
+            **Build**: ${{ github.run_id }}
+            **Commit**: ${{ github.sha }}
+            **Date**: ${new Date().toISOString()}
+            
+            See the artifact: dependency-check-report.html
+            `;
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['security', 'vulnerability', 'high-priority']
+            });

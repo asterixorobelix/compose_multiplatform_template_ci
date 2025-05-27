@@ -1,0 +1,106 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve the app
+title: "[BUG] "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! 🐛
+        
+        Please provide as much detail as possible to help us reproduce and fix the issue.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform are you experiencing this issue on?
+      options:
+        - Android
+        - iOS
+        - Both
+        - Backend/API
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      description: What version of the app are you running?
+      placeholder: "1.0.0 (123)"
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Information
+      description: What device and OS version are you using?
+      placeholder: "iPhone 14 Pro, iOS 16.5 / Samsung Galaxy S23, Android 13"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: "The app crashes when I tap on..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Open the app
+        2. Navigate to train search
+        3. Enter start and end stations
+        4. Tap search
+        5. App crashes
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear description of what you expected to happen
+      placeholder: "The app should display train schedules without crashing"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: A clear description of what actually happened
+      placeholder: "The app crashes with a white screen"
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Videos
+      description: If applicable, add screenshots or videos to help explain your problem
+      placeholder: "Drag and drop images/videos here or paste URLs"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs
+      description: If available, please include any error logs or crash reports
+      placeholder: "Paste error logs here"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: "This happens only when using 5G network..."

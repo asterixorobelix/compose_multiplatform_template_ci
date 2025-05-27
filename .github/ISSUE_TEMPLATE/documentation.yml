@@ -1,0 +1,46 @@
+name: 📚 Documentation Request
+description: Request improvements or additions to documentation
+title: "[DOCS] "
+labels: ["documentation"]
+
+body:
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation needs attention?
+      options:
+        - API Documentation
+        - Setup/Installation Guide
+        - User Guide
+        - Developer Guide
+        - Architecture Documentation
+        - Deployment Guide
+        - Troubleshooting Guide
+        - Code Comments
+        - README Updates
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Documentation Request
+      description: Describe what documentation is needed or what should be improved
+      placeholder: "The API documentation is missing information about..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_state
+    attributes:
+      label: Current State
+      description: Describe the current state of the documentation (if any)
+      placeholder: "Currently there is no documentation for..."
+
+  - type: textarea
+    id: audience
+    attributes:
+      label: Target Audience
+      description: Who is the target audience for this documentation?
+      placeholder: "New developers, end users, system administrators, etc."

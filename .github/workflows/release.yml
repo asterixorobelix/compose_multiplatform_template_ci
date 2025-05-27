@@ -1,0 +1,144 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release-android:
+    name: Release Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+        working-directory: android
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: Decode keystore and service account
+      env:
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+      run: |
+        echo $KEYSTORE_BASE64 | base64 --decode > androidApp/keystore.jks
+        echo $GOOGLE_PLAY_SERVICE_ACCOUNT | base64 --decode > android/service-account.json
+
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Update version in build.gradle
+      run: |
+        sed -i "s/versionName \".*\"/versionName \"${{ steps.version.outputs.VERSION }}\"/" androidApp/build.gradle.kts
+        sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" androidApp/build.gradle.kts
+
+    - name: Build and deploy with Fastlane
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      run: |
+        cd android
+        bundle exec fastlane deploy
+
+  release-ios:
+    name: Release iOS
+    runs-on: macos-latest
+    timeout-minutes: 90
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+        working-directory: ios
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Build shared framework
+      run: ./gradlew shared:assembleXCFramework
+
+    - name: Deploy with Fastlane
+      env:
+        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        VERSION: ${{ steps.version.outputs.VERSION }}
+      run: |
+        cd ios
+        bundle exec fastlane deploy
+
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [release-android, release-ios]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Get version from tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: TaskLens v${{ steps.version.outputs.VERSION }}
+        body: |
+          ## TaskLens v${{ steps.version.outputs.VERSION }}
+          
+          ### 🚀 What's New
+          - AI-powered task extraction improvements
+          - Performance optimizations
+          - Bug fixes and stability improvements
+          
+          ### 📱 Download
+          - Android: Available on Google Play Store
+          - iOS: Available on Apple App Store
+          
+          ### 🔧 Technical
+          - Built with Kotlin Multiplatform
+          - Enhanced cross-platform compatibility
+        draft: false
+        prerelease: false

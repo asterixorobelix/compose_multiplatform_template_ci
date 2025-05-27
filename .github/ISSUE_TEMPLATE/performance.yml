@@ -1,0 +1,61 @@
+name: ⚡ Performance Issue
+description: Report a performance problem
+title: "[PERF] "
+labels: ["performance", "bug"]
+
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform is experiencing the performance issue?
+      options:
+        - Android
+        - iOS
+        - Both
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Performance Issue Type
+      description: What type of performance issue are you experiencing?
+      options:
+        - App startup time
+        - UI lag/stuttering
+        - Memory usage
+        - Battery drain
+        - Network performance
+        - Database performance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the performance issue in detail
+      placeholder: "The app takes 10+ seconds to start up on my device..."
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Information
+      description: Device model and specifications
+      placeholder: "iPhone 12, 128GB / Samsung Galaxy S21, 8GB RAM"
+    validations:
+      required: true
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Performance Metrics
+      description: If available, provide specific metrics (load times, memory usage, etc.)
+      placeholder: |
+        - App startup: 15 seconds
+        - Memory usage: 200MB+
+        - Battery drain: 10% per hour

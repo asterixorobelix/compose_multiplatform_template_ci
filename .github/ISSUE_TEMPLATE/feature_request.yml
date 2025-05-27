@@ -1,0 +1,103 @@
+name: ✨ Feature Request
+description: Suggest an idea for the Train Schedule app
+title: "[FEATURE] "
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! ✨
+        
+        Please provide detailed information about your feature request.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What category does this feature belong to?
+      options:
+        - User Interface
+        - Train Data/Schedules
+        - Notifications
+        - Offline Mode
+        - Premium Features
+        - Accessibility
+        - Performance
+        - API/Backend
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target Platform
+      description: Which platform should this feature be implemented for?
+      options:
+        - Both (Android & iOS)
+        - Android only
+        - iOS only
+        - Backend/API
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: "I'm always frustrated when I can't..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like
+      placeholder: "I would like to see a feature that..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Describe any alternative solutions or features you've considered
+      placeholder: "Alternatively, we could..."
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - Low (Nice to have)
+        - Medium (Would improve experience)
+        - High (Essential for my use case)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: monetization
+    attributes:
+      label: Monetization
+      description: Should this be a premium feature?
+      options:
+        - label: This should be a free feature
+        - label: This could be a premium feature
+        - label: I'm unsure about monetization
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: If you have mockups, wireframes, or examples from other apps, please share them
+      placeholder: "Drag and drop images here or paste URLs"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about the feature request here
